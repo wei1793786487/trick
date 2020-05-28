@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+
+
+
+
+
+            <fieldset class="layui-elem-field layuimini-search">
+
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">请输入</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="search" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm data-add-btn"> 添加新的消息 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn"> 删除 </button>
+            </div>
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="currentTableBar">
+                <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">修改内容</a>
+            </script>
+        </div>
+    </div>
+
+
+
+    <script type="text/html" id="xuhao">
+        {{d.LAY_TABLE_INDEX+1}}
+    </script>
+
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>‘
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script>
+        //每次进入刷新
+
+        function isNumber(value) { //验证是否为数字
+            var patrn = /^(-)?\d+(\.\d+)?$/;
+            if (patrn.exec(value) == null || value == "") {
+                return false
+            } else {
+                return true
+            }
+        }
+
+        layui.use(['form', 'table', "layer", "laydate"], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                table = layui.table,
+                laydate = layui.laydate,
+
+                layer = layui.layer;
+
+
+            function checkPhone(data) {
+                if ((/^1[3456789]\d{9}$/.test(data))) {
+                    return true;
+                }
+            }
+
+
+            table.render({
+                elem: '#currentTableId',
+                url: url + 'message',
+                cols: [
+                    [{
+                            type: "checkbox",
+                            width: 50,
+                            fixed: "left"
+                        },
+                        {
+                            width: 60,
+                            title: 'ID',
+                            sort: true,
+                            templet: "#xuhao",
+                            align: "center"
+                        },
+                        {
+                            field: 'addName',
+                            width: 160,
+                            title: '添加人',
+                        },
+                        {
+                            field: 'name',
+                            width: 180,
+                            title: '标题',
+                           
+                        },
+                        {
+                            field: 'type',
+                            width: 180,
+                            title: '类型',
+                            templet: function (data) {
+                                return data.type === 1 ? "公告" : "留言";
+                            }
+                        },
+                        {
+                            field: 'createtime',
+                            width: 180,
+                            title: '创建时间',
+                           
+                        },
+                        
+                        {
+                            field: 'message',
+                            title: '内容',
+                           
+                        },
+                        {
+                            title: '操作',
+                            width: 150,
+                            templet: '#currentTableBar',
+                            fixed: "right",
+                            align: "center"
+                        }
+
+                    ]
+                ],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true
+            });
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                console.log(data)
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        search: data.field.search
+                    }
+                }, 'data');
+
+                return false;
+            });
+
+
+            // 监听添加操作
+            $(".data-add-btn").on("click", function () {
+
+                var index = layer.open({
+                    title: '',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'add_message.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+
+                return false;
+            });
+
+
+            table.on('edit(currentTableFilter)', function (obj) {
+
+                var old = $(this).prev().text(); //旧值
+
+
+                if (obj.field = "address") {
+                    if (obj.value === "" || obj.value == null) {
+                        layer.msg("输入为空", {
+                            time: 1000,
+                        })
+                        $(this).val(old); //重新掰回来 
+                        return;
+                    }
+                } else
+                if (obj.field = "cycle") {
+                    var pp = isNumber(obj.value);
+                    if (!pp) {
+                        layer.msg("请填写数字", {
+                            time: 1000,
+                        })
+                        $(this).val(old); //重新掰回来 
+                    }
+                }
+                chance_elevator(obj.data).then(res => {
+                    if (res.code != 200) {
+                        layer.msg(res.message);
+                    }
+                });
+
+            })
+
+            // 监听删除操作
+            $(".data-delete-btn").on("click", function () {
+
+                layer.confirm('真的删除行么', function (index) {
+
+                    var checkStatus = table.checkStatus('currentTableId'),
+                        data = checkStatus.data;
+                    var arr = []; //存储id的数组
+                    data.forEach(function (item) {
+                        arr.push(item.id);
+                    })
+
+                    if (arr.length == 0) {
+                        layer.msg("请先选择", {
+                            time: 1000,
+                        })
+                        return false;
+                    }
+                    layer.msg('删除中', {
+                        icon: 16,
+                        shade: 0.01
+                    });
+
+                    delete_message(arr).then(res => {
+                        if (res.code === 200) {
+                            layer.msg(res.data, {
+                                time: 1000,
+                            }, function () {
+                                location.reload();
+                            });
+
+                        } else {
+                            layer.msg(res.message, {
+                                time: 1000,
+                                icon: 2
+                            })
+                        }
+
+                    })
+                })
+            });
+
+
+            table.on('tool(currentTableFilter)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'edit') {
+                    var index = layer.open({
+                        title: '',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin: true,
+                        shadeClose: true,
+                        area: ['90%', '90%'],
+                        content: 'add_message.html?id='+data["id"],
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+
+                }
+            });
+
+        });
+    </script>
+    <script>
+
+    </script>
+
+</body>
+
+</html>

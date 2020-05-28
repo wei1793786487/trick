@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+
+<body>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>网上售票系统</title>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/index.css" /><!-- 全局css -->
+    <link rel="stylesheet" href="../css/banner.css"><!-- banner 轮播界面引用css -->
+    <link rel="stylesheet" type="text/css" href="../css/ticket.css" />
+    <!--公告栏以及车票具体页css-->
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row top">
+                <div class="logo col-md-4">
+                    <img src="../images/logo.png">
+                    <span>
+                        网上售票系统
+                    </span>
+                </div>
+                <div class="dh col-md-8">
+                    <div class="container-fluid">
+                        <div class="row">
+							<div class="topList col-md-2"><a href="index.html">主页</a></div>
+							<div class="topList col-md-2"><a href="detail.html">留言界面</a></div>
+							<div class="topList col-md-2"><a href="message.html">票务管理</a></div>
+
+							<div id="nologin" style="display: none;" class="topList col-md-2"><a
+									href="register.html">您没有登录，请登录</a>
+							</div>
+							<div id="islogin" style="display: none;" class="topList col-md-2"><a><span
+										id="uname"></span>，您好</a>
+
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 头部引用结束 -->
+    <!-- 面包屑 -->
+    <div class="container-fluid" style="background-color: #f5f5f5;">
+        <div class="breadcrumb">
+            当前位置：<a href="./index.html">返回首页</a>
+        </div>
+    </div>
+    <!-- 面包屑 -->
+    <div class="container">
+        <div class="row" style="border-top: 2px solid #62ADFD;">
+            <div class="col-md-3">
+                <div class="boardLeft">
+                    <h3>最新公告</h3>
+                    <ul id="note">
+
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="boardRight">
+                    <div class="boardRightTop">
+                        <h2 id="title"></h2>
+                    </div>
+                    <div class="boardRightBody" id="body">
+                        <!-- <p>
+                            为加强新型冠状病毒感染的肺炎疫情防控工作，配合各地2月10日前灵活安排工作的措施，进一步方便旅客办理退票，中国国家铁路集团有限公司决定，自2020年2月6日0时起，此前在车站、12306网站等各渠道已购买的全国铁路火车票，旅客在开车前自愿改变行程需退票的，铁路部门均不收取退票手续费，购买铁路乘意险的一同办理。
+                            <br />
+                            对无法在网上办理退票的旅客，铁路部门继续推出延长退票时限的服务措施。凡是于2月5日24时前使用现金购票或已于2月5日24时前换取纸质车票（含报销凭证）的旅客，如开车前无法到车站办理退票的，可延期至3月31日24时前办理退票；凡是火车票票面发站所在地车站进站通道关闭的，在进站通道恢复之日起30日内均可办理退票；退票须在购票地或出发地各车站办理，办理时继续免收退票费，铁路乘意险一同办理。
+                            <br />
+                            因各地学校开学时间不同，为方便学生旅客退票，铁路部门已于1月27日起，在办理学生票退票时均不收取退票手续费，购买铁路乘意险的一同办理。
+                        </p> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 底部版权区 -->
+    <div class="container-fluid">
+        <div class="row bottom">
+            <div class="bottomCenter col-md-6 col-md-offset-3">
+                <span>© 2020 成辉公司  &nbsp;  <a href="">隐私政策</a> &nbsp;  京ICP证066666x号 京ICP备100066666号</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery.easyfader.min.js"></script>
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../js/getParameter.js" charset="utf-8"></script>
+    <script src="../js/cookieUtils.js" charset="utf-8"></script>
+	<script src="../js/common.js" charset="utf-8"></script>
+
+    <script>
+        var username = readCookie("username");
+
+        if (username != "") {
+            $("#islogin").css("display", "block")
+            $("#uname").html(username)
+        } else {
+            $("#nologin").css("display", "block")
+        }
+        getnew().then(res => {
+            let data = res.data;
+            let d = ""
+            for (i = 0; i < data.length; i++) {
+                let id = data[i].id;
+                let name = data[i].name;
+                //接下来就是激动人心的字符串拼接
+                let m = '  <li><a href="board.html?id=' + id + '">' + name + '</a></li>'
+                d += m;
+            }
+            $("#note").html(d);
+        })
+        var id = getParameter("id");
+        console.log(id);
+        findmessageById(id).then(res => {
+            let data = res.data;
+            let title = data.name;
+            let message = data.message;
+            console.log(res)
+            $("#title").html(title);
+            $("#body").html(message)
+        })
+    </script>
+</body>
+
+</html>

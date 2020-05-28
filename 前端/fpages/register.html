@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>登录/注册</title>
+    <link rel="stylesheet" href="../css/register.css">
+</head>
+
+<body>
+    <div class="dowebok">
+        <div class="form sign-in">
+            <h2>欢迎回来</h2>
+            <label>
+                <span>账号</span>
+                <input type="text" id="username" name="username" />
+            </label>
+
+            <label>
+                <span>密码</span>
+                <input type="password" id="password" name="password" />
+            </label>
+            <label>
+                <p><span>验证码</span></p>
+                <span>
+                    <input type="text" id="inputimg" style="width: 110px;height: 42px;float: left; margin-right: 10px;" />
+                    <img id="captchaPic" src=""
+                        style="height: 40px; width: 112px;border:1px solid rgba(0, 0, 0, 0.4);" />
+                </span>
+            </label>
+            <button type="button" id="login" class="submit">登 录</button>
+        </div>
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                    <h2>还未注册？</h2>
+                    <p>立即注册，去迎接诗与远方！</p>
+                </div>
+                <div class="img__text m--in">
+                    <h2>已有帐号？</h2>
+                    <p>有帐号就登录吧，好久不见了！</p>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up">注 册</span>
+                    <span class="m--in">登 录</span>
+                </div>
+            </div>
+            <div class="form sign-up">
+                <h2>立即注册</h2>
+                <label>
+                    <span>用户名</span>
+                    <input type="text" id="rname" />
+                </label>
+                <label>
+                    <span>密码</span>
+                    <input type="password" id="rpass" />
+                </label>
+                <label>
+                    <span>确认密码</span>
+                    <input type="password" id="rpass2" />
+                </label>
+                <button type="button" id="regist" class="submit">注 册</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/register.js"></script>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/jquery.easyfader.min.js"></script>
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../js/getParameter.js" charset="utf-8"></script>
+    <script src="../js/cookieUtils.js" charset="utf-8"></script>
+
+
+
+    <script>
+        function getImage() {
+            return url + "verifyCode.jpg?" + new Date().getTime();
+        }
+        var captcha = $("#captchaPic");
+        let imageurl = getImage();
+        captcha.prop("src", imageurl);
+
+
+
+        $("#captchaPic").click(function () {
+            let imageurl = getImage();
+            captcha.prop("src", imageurl);
+        });
+
+        layui.use(["layer"], function () {
+            layer = layui.layer;
+
+
+            $("#login").click(function () {
+                let username = $("#username").val();
+                let password = $("#password").val();
+                let captcha1 = $("#inputimg").val();
+                login({
+                    username: username,
+                    password: password,
+                    captcha: captcha1
+                }).then(res => {
+                    if (res.success === true) {
+                        setCookie("username",username)
+                        layer.msg('登录成功', {
+                            time: 1000,
+                        }, function () {
+                            window.location = 'index.html';
+                        });
+                    } else {
+                        let imageurl = getImage();
+                        captcha.prop("src", imageurl);
+                        layer.msg(res.errorMsg);
+                   
+                    }
+                })
+            })
+
+            $("#regist").click(function () {
+                let rname = $("#rname").val();
+                let rpass = $("#rpass").val();
+                let rpass2 = $("#rpass2").val();
+                if (rpass != rpass2) {
+                    layer.msg("两次密码输入不一致", {
+                        time: 1000,
+                        icon: 2
+                    })
+                    return false;
+                }
+                // //添加用户
+                add_user_r({
+                    username: rname,
+                    password: rpass
+                }).then(res => {
+                    if (res.code === 200) {
+                        layer.msg("账号创建成功", {
+                            time: 1000,
+                        }, function () {
+                            location.reload();
+                        });
+
+                    } else {
+                        layer.msg(res.message, {
+                            time: 1000,
+                            icon: 2
+                        })
+                    }
+                })
+            })
+
+        });
+    </script>
+</body>
+
+</html>

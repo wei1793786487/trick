@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+
+
+
+
+
+            <fieldset class="layui-elem-field layuimini-search">
+
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">搜索信息</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="search" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                            </div>
+                        </div>
+
+                      
+                    </form>
+                </div>
+            </fieldset>
+
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn"> 删除记录</button>
+            </div>
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="currentTableBar">
+            </script>
+        </div>
+    </div>
+
+
+
+    <script type="text/html" id="xuhao">
+        {{d.LAY_TABLE_INDEX+1}}
+    </script>
+
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>‘
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script>
+        //每次进入刷新
+
+        function isNumber(value) { //验证是否为数字
+            var patrn = /^(-)?\d+(\.\d+)?$/;
+            if (patrn.exec(value) == null || value == "") {
+                return false
+            } else {
+                return true
+            }
+        }
+
+        layui.use(['form', 'table', "layer", "laydate"], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                table = layui.table,
+                laydate = layui.laydate,
+
+                layer = layui.layer;
+
+
+            function checkPhone(data) {
+                if ((/^1[3456789]\d{9}$/.test(data))) {
+                    return true;
+                }
+            }
+
+
+            table.render({
+                elem: '#currentTableId',
+                url: url + 'back',
+                cols: [
+                    [{
+                            type: "checkbox",
+                            width: 50,
+                            fixed: "left"
+                        },
+                        {
+                            width: 60,
+                            title: 'ID',
+                            sort: true,
+                            templet: "#xuhao",
+                            align: "center"
+                        },
+                        {
+                            field: 'startAddress',
+                            width: 160,
+                            title: '起始地点',
+                        },
+                        {
+                            field: 'toAddress',
+                            width: 180,
+                            title: '前往地点',
+
+                        },
+                        {
+                            field: 'trickname',
+                            width: 180,
+                            title: '车票名称',
+
+                        },
+                        {
+                            field: 'backMoney',
+                            width: 180,
+                            title: '退还金额',
+                            templet: function (data) {
+                                return data.backMoney+"元";
+                            }
+                        },
+                        {
+                            field: 'username',
+                            width: 180,
+                            title: '用户名称',
+
+                        },
+                        {
+                            field: 'operTime',
+                            title: '创建时间',
+
+                        },
+
+
+                    ]
+                ],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true
+            });
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                console.log(data)
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        search: data.field.search
+                    }
+                }, 'data');
+
+                return false;
+            });
+
+
+
+
+            // 监听删除操作
+            $(".data-delete-btn").on("click", function () {
+
+                layer.confirm('真的删除行么', function (index) {
+
+                    var checkStatus = table.checkStatus('currentTableId'),
+                        data = checkStatus.data;
+                    var arr = []; //存储id的数组
+                    data.forEach(function (item) {
+                        arr.push(item.id);
+                    })
+
+                    if (arr.length == 0) {
+                        layer.msg("请先选择", {
+                            time: 1000,
+                        })
+                        return false;
+                    }
+                    layer.msg('删除中', {
+                        icon: 16,
+                        shade: 0.01
+                    });
+
+                    delete_back(arr).then(res => {
+                        if (res.code === 200) {
+                            layer.msg("删除成功", {
+                                time: 1000,
+                            }, function () {
+                                location.reload();
+                            });
+
+                        } else {
+                            layer.msg(res.message, {
+                                time: 1000,
+                                icon: 2
+                            })
+                        }
+
+                    })
+                })
+            });
+
+
+            
+        });
+    </script>
+    <script>
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>电梯管理系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+</head>
+
+<body>
+
+
+
+    <!-- //会议列表 -->
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+            <fieldset class="layui-elem-field layuimini-search">
+                <legend>搜索信息</legend>
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">日志信息</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="serch" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <a class="layui-btn" lay-submit="" lay-filter="data-search-btn">搜索</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+
+            <div class="layui-btn-group">
+                <!-- <button class="layui-btn layui-btn-danger data-delete-btn">删除</button> -->
+            </div>
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        </div>
+    </div>
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+
+    <script type="text/html" id="xuhao">
+        {{d.LAY_TABLE_INDEX+1}}
+    </script>
+
+    <script>
+        layui.use(['form', 'table', 'util', 'laydate'], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                laydate = layui.laydate,
+                util = layui.util,
+                table = layui.table;
+            table.render({
+                elem: '#currentTableId',
+                url: url + 'log',
+                loading: "true",
+                cols: [
+                    [{
+                            type: "checkbox",
+                            width: 50,
+                            fixed: "left"
+                        },
+                        {
+                            title: 'ID',
+                            sort: true,
+                            width: 70,
+                            templet: "#xuhao",
+                            align: "center"
+                        },
+                        {
+                            field: 'name',
+                            title: '行为',
+                            width: 200,
+                            align: "center"
+                        },
+                        {
+                            field: 'url',
+                            width: 150,
+                            title: '路径',
+                            align: "center"
+                        },
+                        {
+                            field: 'requestparam',
+                            title: '参数',
+                            width: 200,
+                            align: "center",
+                            templet: function (data) {
+                                return data.requestparam === "{}" ? "无参数" : data.requestparam;
+                            }
+                        },
+                        {
+                            field: 'ip',
+                            width: 120,
+                            title: '请求ip',
+                            align: "center"
+                        },
+                       
+                        {
+                            field: 'time',
+                            width: 120,
+                            sort: true,
+                            title: '时间(毫秒)',
+                            align: "center"
+                        },
+                        {
+                            field: 'createTime',
+                            title: '执行时间',
+                            sort: true,
+                            align: "center",
+                            templet: function (data) {
+
+                                if (data.createTime == null) {
+                                    return "";
+                                }
+                                return util.toDateString(data.createTime,
+                                    "yyyy-MM-dd HH:mm:ss");
+                            }
+
+                        },
+
+                    ]
+                ],
+                limits: [10, 15, 20, 50, 100],
+                limit: 15,
+                page: true,
+                text: {
+                    none: '无数据'
+                }
+            });
+
+
+
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+
+
+                //执行搜索重载
+                table.reload('currentTableId', {
+                    page: {
+                        curr: 1
+                    },
+                    where: {
+                        serch: data.field.serch
+                    }
+                }, 'data');
+                return false;
+            });
+
+            // // 监听删除操作
+            // $(".data-delete-btn").on("click", function () {
+            //     layer.confirm('真的删除行么', function (index) {
+
+
+            //         var checkStatus = table.checkStatus('currentTableId'),
+            //             data = checkStatus.data;
+
+            //         var arr = []; //存储id的数组
+            //         data.forEach(function (item) {
+            //             arr.push(item.id);
+            //         })
+
+            //         if (arr.length == 0) {
+            //             layer.msg("请先选择", {
+            //                 time: 1000,
+            //             })
+            //             return false;
+            //         }
+            //         layer.msg('删除中', {
+            //             icon: 16,
+            //             shade: 0.01
+            //         });
+
+
+            //         delete_log(arr).then(res => {
+            //             if (res.code === 200) {
+            //                 layer.msg(res.data, {
+            //                     time: 1000,
+            //                 }, function () {
+            //                     location.reload();
+            //                 });
+
+            //             } else {
+            //                 layer.msg(res.message, {
+            //                     time: 1000,
+            //                     icon: 2
+            //                 })
+            //             }
+            //         })
+
+            //     })
+            // });
+
+
+
+        });
+    </script>
+    <script>
+
+    </script>
+
+</body>
+
+</html>

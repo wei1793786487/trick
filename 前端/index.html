@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    
+<script src="js/axios.js" charset="utf-8"></script>
+<script src="network/network.js" charset="utf-8"></script>
+<script>
+    axios({
+        method: 'get',
+        url: url+"isLife",
+        crossDomain: true,
+        withCredentials: true
+    }).then(res => {
+        console.log(res)
+        if (res.data.islife) {
+            window.location.href = "./pages/index.html"
+        } else {
+            window.location.href = "./login.html"
+        }
+    }).catch((e)=>{
+        if(e.response.status===403){
+         alert("你没有权限访问这个页面")
+         window.history.go(-1)
+        }
+
+    })
+
+</script>
+
+</html>

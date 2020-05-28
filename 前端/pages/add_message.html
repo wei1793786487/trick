@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.5.4/css/layui.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style type="text/css">
+        .layui-laydate-content>.layui-laydate-list {
+            padding-bottom: 0px;
+            overflow: hidden;
+        }
+
+        .layui-laydate-content>.layui-laydate-list>li {
+            width: 50%
+        }
+
+        .merge-box .scrollbox .merge-list {
+            padding-bottom: 5px;
+        }
+
+        .BMap_cpyCtrl {
+            display: none;
+        }
+
+        .anchorBL {
+            display: none;
+        }
+
+        .editor {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+
+            <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                <legend id="way">新建消息</legend>
+            </fieldset>
+            <form class="layui-form" action="#" lay-filter="example">
+
+                <input type="text" name="id" id="id" style="display: none;">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" lay-verify="address" autocomplete="off" placeholder="请输入消息的标题"
+                            class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline" style="display: none;">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-block">
+                        <select name="type">
+                            <option value="1">公告</option>
+
+                            <option value="0">留言</option>
+                        </select>
+                    </div>
+                </div>
+                <br>
+                <br>
+
+                <div class="layui-form-item" class="editor" style="margin-top: 20px;">
+                    <div id="editor" style="margin: 50px 0 50px 0">
+                        <p>请输入内容<b>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button style="margin-top: 10px" id="submit" class="layui-btn" lay-submit="demo1"
+                            lay-filter="demo1">新增消息</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+    <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+    <script src="../js/p-ajax.js" charset="utf-8"></script>
+    <script src="../js/axios.js" charset="utf-8"></script>
+    <script src="../network/network.js" charset="utf-8"></script>
+    <script src="../js/getParameter.js" charset="utf-8"></script>
+
+    </script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+    <script>
+        layui.use(['form', "layer", "wangEditor"], function () {
+
+            var form = layui.form,
+                layer = layui.layer,
+                wangEditor = layui.wangEditor;
+            // 自定义验证规则
+            form.verify({
+                address: function (value) {
+                    if (value.length == "") {
+                        return '';
+                    }
+                }
+            });
+
+            var editor = new wangEditor('#editor');
+            editor.customConfig.uploadImgServer = url + "/upload";
+            editor.customConfig.uploadFileName = 'file';
+            editor.customConfig.pasteFilterStyle = false;
+            editor.customConfig.uploadImgMaxLength = 5;
+            editor.customConfig.withCredentials = true
+            editor.customConfig.uploadImgHooks = {
+                // 上传超时
+                timeout: function (xhr, editor) {
+                    layer.msg('上传超时！')
+                },
+                customInsert: function (insertImg, result, editor) {
+                    insertImg("../images/" + result.data);
+                }
+            };
+            editor.customConfig.customAlert = function (info) {
+                layer.msg(info);
+            };
+            editor.create();
+
+
+
+            let id = getParameter("id");
+            if (id != null) {
+                $("#way").html("修改消息")
+                $("#submit").html("确认修改")
+                findmessageById(id).then(res => {
+                    let data = res.data;
+                    editor.txt.html(data.message);
+                    form.val('example', {
+                        "id": data["id"],
+                        "name": data["name"],
+                        "type": data["type"],
+                    })
+                })
+            }
+
+
+
+
+            //监听提交
+            form.on('submit(demo1)', function (data) {
+
+                let html = editor.txt.html()
+
+                layer.msg('添加中', {
+                    icon: 16,
+                    shade: 0.01
+                });
+                var data = data.field
+
+
+
+                if(id!=null){
+                    chance_message(data, html).then(res => {
+                    if (res.code === 200) {
+                        layer.msg(res.data, {
+                            time: 1000,
+                        }, function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg(res.message, {
+                            time: 1000,
+                            icon: 2
+                        })
+                    }
+                })
+                }else{
+                    add_message(data, html).then(res => {
+                    if (res.code === 200) {
+                        layer.msg(res.data, {
+                            time: 1000,
+                        }, function () {
+                            location.reload();
+                        });
+                    } else {
+                        layer.msg(res.message, {
+                            time: 1000,
+                            icon: 2
+                        })
+                    }
+                })
+                }
+             
+                return false;
+            });
+
+
+
+        });
+    </script>
+
+</body>
+
+</html>

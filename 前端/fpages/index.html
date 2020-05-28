@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>网上售票系统</title>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="../css/index.css" /><!-- 全局css -->
+	<link rel="stylesheet" href="../css/banner.css"><!-- banner 轮播界面引用css -->
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="container">
+			<div class="row top">
+				<div class="logo col-md-4">
+					<img src="../images/logo.png">
+					<span>
+						网上售票系统
+					</span>
+				</div>
+				<div class="dh col-md-8">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="topList col-md-2"><a href="index.html">主页</a></div>
+							<div class="topList col-md-2"><a href="detail.html">留言界面</a></div>
+							<div class="topList col-md-2"><a href="message.html">票务管理</a></div>
+
+							<div id="nologin" style="display: none;" class="topList col-md-2"><a
+									href="register.html">您没有登录，请登录</a>
+							</div>
+							<div id="islogin" style="display: none;" class="topList col-md-2"><a><span
+										id="uname"></span>，您好</a>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	<!-- 大图导航区开始 -->
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="banner">
+					<div id="dowebok" class="fader">
+						<img class="slide" height="200" width="200" src="../images/1.jpg">
+						<img class="slide" height="200" width="200" src="../images/2.jpg">
+						<img class="slide" height="200" width="200" src="../images/3.jpg">
+						<img class="slide" height="200" width="200" src="../images/4.jpg">
+						<div class="fader_controls">
+							<div class="page prev" data-target="prev">&lsaquo;</div>
+							<div class="page next" data-target="next">&rsaquo;</div>
+							<ul class="pager_list"></ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 大图导航区结束 -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="col-md-12">
+					<!-- 小搜索框开始 -->
+					<div class="wrap">
+						<div class="dowebok-header">
+							<label for="card-1-trigger">车辆信息查询</label>
+						</div>
+						<input id="card-1-trigger" type="radio" name="cards" checked>
+						<div class="card card-one">
+							<!-- 查询高铁 -->
+							<form class="form-horizontal   " id="search">
+								<div class="form-group form-group-sm">
+									<label for="inputEmail3" class="col-sm-2 control-label">
+										<h5>出发地</h5>
+									</label>
+									<div class="col-sm-7">
+										<input type="place" name="splace" id="splace" class="form-control" id="place"
+											placeholder="出发地">
+									</div>
+								</div>
+								<div class="form-group form-group-sm">
+									<label for="inputPassword3" class="col-sm-2 control-label">
+										<h5>到达地</h5>
+									</label>
+									<div class="col-sm-7">
+										<input type="arrive" name="eplace" id="eplace" class="form-control" id="arrive"
+											placeholder="到达地">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-5">
+										<button type="submit" id="submit"
+											class="btn btn-primary btn-lg btn-block">搜索</button>
+									</div>
+								</div>
+							</form>
+							<!-- 查询高铁 -->
+						</div>
+
+
+					</div>
+				</div>
+				<div class="col-md-12 messageBoard">
+					<div class="messageBox">
+						<div class="title">
+							<h2>留言板</h2>
+						</div>
+						<ul id="lm">
+
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-5">
+				<div class="officialInformation">
+					<div class="messageBox">
+						<div class="title officialInformationTitle">
+							<h2>官方公告栏</h2>
+						</div>
+						<ul id="note">
+
+
+						</ul>
+					</div>
+					<!-- 文章底部小按钮 -->
+					<div class="messageBtn">
+						<ul class="btnBox">
+							<li><a href=""> &lt; </a></li>
+							<li><a href=""> &gt; </a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row bottom">
+			<div class="bottomCenter col-md-6 col-md-offset-3">
+				<span>© 2020 成辉公司  &nbsp;  <a href="">隐私政策</a> &nbsp;  京ICP证066666x号 京ICP备100066666号</span>
+			</div>
+		</div>
+	</div>
+	<!-- banner区引用js块开始 -->
+	<script src="../js/jquery.min.js"></script>
+	<script src="../js/jquery.easyfader.min.js"></script>
+	<script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+	<script src="../network/network.js" charset="utf-8"></script>
+	<script src="../js/p-ajax.js" charset="utf-8"></script>
+	<script src="../js/cookieUtils.js" charset="utf-8"></script>
+	<script src="../js/common.js" charset="utf-8"></script>
+	<script>
+		$(function () {
+
+		
+			$('#dowebok').easyFader();
+
+			initmessage(0).then(res => {
+				//获取留言
+				//获取留言
+				let lm = res.data;
+				let m = ""
+				for (i = 0; i < lm.length; i++) {
+					let message = lm[i].message;
+					let s = '<li><div href="#">' + message + '</div> </li>'
+					m += s;
+				}
+				$("#lm").html(m);
+
+			})
+			initmessage(1).then(res => {
+				//获取公告
+				let ann = res.data;
+				let s = ""
+				for (i = 0; i < res.data.length; i++) {
+					let id = ann[i].id;
+					let name = ann[i].name;
+					let createtime = ann[i].createtime.substring(0, 11);
+
+					//接下来就是激动人心的字符串拼接
+					let m = ' <li><a href=board.html?id=' + id + '>' + name + '</a><span>' + createtime +
+						'</span></li>'
+					s += m;
+				}
+				$("#note").html(s);
+
+			})
+
+		});
+		layui.use(["layer"], function () {
+			layer = layui.layer;
+			//搜索车票信息
+			$("#submit").click(function () {
+				var spalce = $("#splace").val();
+				var eplace = $("#eplace").val();
+				if (eplace === "" || spalce === "") {
+					layer.msg("请输入起始点");
+					return false;
+				}
+				window.location.href = "list.html?s=" + spalce + "&e=" + eplace;
+				return false;
+			})
+
+		
+
+		});
+	</script>
+	<!-- banner区引用js块结束 -->
+</body>
+
+</html>

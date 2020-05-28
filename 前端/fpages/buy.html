@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+
+<body>
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>网上售票系统</title>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="../css/index.css" /><!-- 全局css -->
+	<link rel="stylesheet" href="../css/banner.css"><!-- banner 轮播界面引用css -->
+	<link rel="stylesheet" type="text/css" href="../css/ticket.css" />
+	<!--公告栏以及车票具体页css-->
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="container">
+			<div class="row top">
+				<div class="logo col-md-4">
+					<img src="../images/logo.png">
+					<span>
+						网上售票系统
+					</span>
+				</div>
+				<div class="dh col-md-8">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="topList col-md-2"><a href="index.html">主页</a></div>
+							<div class="topList col-md-2"><a href="detail.html">留言界面</a></div>
+							<div class="topList col-md-2"><a href="message.html">票务管理</a></div>
+
+							<div id="nologin" style="display: none;" class="topList col-md-2"><a
+									href="register.html">您没有登录，请登录</a>
+							</div>
+							<div id="islogin" style="display: none;" class="topList col-md-2"><a><span
+										id="uname"></span>，您好</a>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 头部引用结束 -->
+	<!-- 面包屑 -->
+	<div class="container-fluid" style="background-color: #f5f5f5;">
+		<div class="breadcrumb">
+			当前位置：<a href="./tickets.html">返回列表页</a>
+		</div>
+	</div>
+	<!-- 面包屑 -->
+	<img src="../images/pay.png" width="500px" height="500px" id="pay" style="display: none;">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="buyTop">
+					<h4>车次信息</h4>
+					<table class="title-text table table-bordered">
+						<tr>
+							<th>
+								<h5>车次名称</h5>
+							</th>
+							<th>
+								<h5>发车地点</h5>
+							</th>
+							<th>
+								<h5>终点地点</h5>
+							</th>
+							<th>
+								<h5>发车时间</h5>
+							</th>
+							<th>
+								<h5>到站时间</h5>
+							</th>
+							<th>
+								<h5>剩余票数</h5>
+							</th>
+							<th>
+								<h5>票价</h5>
+							</th>
+
+						</tr>
+						<th>
+							<h5 id="name"></h5>
+						</th>
+						<th>
+							<h5 id="sd"></h5>
+						</th>
+						<th>
+							<h5 id="ed"></h5>
+						</th>
+						<th>
+							<h5 id="st"></h5>
+						</th>
+						<th>
+							<h5 id="et"></h5>
+						</th>
+						<th>
+							<h5 id="number"></h5>
+						</th>
+
+						<th>
+							<h5 id="price"></h5>
+						</th>
+					</table>
+					<h4>身份信息</h4>
+					<table class="title-text table table-bordered">
+						<tr>
+							<th>
+								<h5>身份证</h5>
+							</th>
+						</tr>
+					</table>
+					<table class="title-text table table-bordered table-hover">
+
+						<th>
+							<div class="col-xs-10">
+								<form id="addorder">
+									<input type="text" id="id" name="id" style="display: none;">
+									<input type="text" id="card" class="form-control" placeholder="请在此处输入身份证">
+								</form>
+							</div>
+						</th>
+
+					</table>
+				</div>
+				<div class="col-md-6 col-md-offset-3">
+					<div class="buyBody" style="padding: 20px 0;">
+						<button class="btn btn-default btn-warning center-block btn-block" id="sumbit"
+							type="submit">购买</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 提醒 -->
+	<div class="title-text">
+		<div class="tips-box mt-lg shao-tips">
+			<h4 class="tips-tit ">温馨提示</h4>
+			<p>1.别问，问就是爱你</p>
+			<p>2. 没有支付，支付需要对接支付宝或者微信需要企业认证
+			</p>
+			<p>3. 只判断身份证合法不合法，不判断是不是存在
+			</p>
+			<p>4. 购票时可使用的有效身份证件包括：中华人民共和国居民身份证、港澳居民来往内地通行证、台湾居民来往大陆通行证和按规定可使用的有效护照。</p>
+			<p>5. 购买儿童票时，乘车儿童有有效身份证件的，请填写本人有效身份证件信息。乘车儿童没有有效身份证件的，应使用同行成年人的有效身份证件信息；购票时不受第一条限制，但购票后、开车前须办理换票手续方可进站乘车。
+			</p>
+			<p>6.
+				购买残疾军人（伤残警察）优待票的，须在购票后、开车前办理换票手续方可进站乘车。换票时，不符合规定的减价优待条件，没有有效"中华人民共和国残疾军人证"或"中华人民共和国伤残人民警察证"的，不予换票，所购车票按规定办理退票手续。
+			</p>
+			<p>7.父母为未成年子女投保，须在我的乘车人 登记未成年子女的有效身份证件信息。
+				<p>8.未尽事宜详见《铁路旅客运输规程》等有关规定和车站公告。</p>
+		</div>
+	</div>
+	<!-- 提醒 -->
+	<!-- 底部版权区 -->
+	<div class="container-fluid">
+		<div class="row bottom">
+			<div class="bottomCenter col-md-6 col-md-offset-3">
+				<span>© 2020 成辉公司 &nbsp; <a href="">隐私政策</a> &nbsp; 京ICP证066666x号 京ICP备100066666号</span>
+			</div>
+		</div>
+		<script src="../js/jquery.min.js"></script>
+		<script src="../js/jquery.easyfader.min.js"></script>
+		<script src="../lib/layui-v2.5.4/layui.js" charset="utf-8"></script>
+		<script src="../network/network.js" charset="utf-8"></script>
+		<script src="../js/p-ajax.js" charset="utf-8"></script>
+		<script src="../js/getParameter.js" charset="utf-8"></script>
+		<script src="../js/cookieUtils.js" charset="utf-8"></script>
+		<script src="../js/common.js" charset="utf-8"></script>
+
+	</div>
+	<script>
+		function isCardNo(card) {
+			var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+			return reg.test(card)
+		}
+
+		var id = getParameter("id");
+
+		var username = readCookie("username");
+
+		if (username != "") {
+			$("#islogin").css("display", "block")
+			$("#uname").html(username)
+		} else {
+			$("#nologin").css("display", "block")
+		}
+		findTrickById(id).then(res => {
+			let d = res.data
+			$("#id").html(d.id)
+			$("#name").html(d.trainName)
+			$("#sd").html(d.saddress)
+			$("#ed").html(d.eaddress)
+			$("#st").html(d.stime)
+			$("#et").html(d.etime)
+			$("#number").html(d.number)
+			$("#price").html(d.price)
+
+		})
+
+
+		layui.use(["layer"], function () {
+			layer = layui.layer;
+			$("#sumbit").click(function () {
+
+				let card = $("#card").val();
+				let isca = isCardNo(card);
+				if (!isca) {
+					layer.msg("请输入合法身份证");
+					return false;
+				} else {
+					layer.open({
+						type: 1,
+						title: false,
+						closeBtn: 0,
+						area: ['auto'],
+						skin: 'layui-layer-nobg', //没有背景色
+						shadeClose: true,
+						content: $('#pay')
+					});
+					setTimeout(() => {
+					
+						layer.msg("支付成功")
+						setTimeout(() => {
+							add_order(id).then(res => {
+						       layer.closeAll();
+								if (res.code === 200 && res.code != "校验成功") {
+									layer.msg("购票成功", {
+										time: 1000,
+									}, function () {
+										location.reload();
+									});
+								} else {
+									layer.msg(res.message)
+								}
+							})
+						}, 2000);
+
+					}, 3000);
+
+				}
+			})
+		});
+	</script>
+</body>
+
+</html>
