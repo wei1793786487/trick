@@ -29,7 +29,8 @@ public class CustomizeValidateCodeFilter extends OncePerRequestFilter {
 
     private StringRedisTemplate redisTemplate;
 
-    /**
+    /**tree
+     *
      * 因为过滤器是最后至执行的 所有没有办法注入 只能通过构造函数
      *
      * @param redisTemplate                redis处理
